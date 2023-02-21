@@ -1,23 +1,26 @@
-export default interface IUser {
+export interface IUserData {
+    fullName: string,
+    userName: string,
+    email: string,
+    password: string
+}
+
+export default interface IUser extends IUserData{
     _id: String,
-    fullName: String,
-    userName: String,
-    email: String,
-    password: String,
     private: Boolean,
-    picture: String,
+    picture?: String,
     files: IFiles[],
     albums: IAlbums[]
 }
 
 interface IFiles {
-    id: String,
-    url: String,
-    type: String,
-    date: String
+    id: string,
+    url: string,
+    type: string,
+    date: string
 }
 
 interface IAlbums {
-    name: String,
+    name: string,
     files: IFiles[]
 }
