@@ -28,13 +28,7 @@ const userSchema = new Schema({
             default: false
         },
         picture: {
-            type: String
-        },
-        files: {
-            type: Array
-        },
-        albums: {
-            type: Array
+            type: Object
         }
     },
     {
