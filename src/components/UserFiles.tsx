@@ -1,7 +1,8 @@
 import { useState, Dispatch, SetStateAction } from 'react'
-import IUser, { IFiles } from '../types/user'
-import { changePicture, deleteFiles } from '../services/user'
-import { Box, Grid, CardMedia, IconButton, Menu, MenuItem } from '@mui/material'
+import NextLink from 'next/link'
+import { IPublication } from '../types/publication'
+import { deletePublication } from '../services/publication'
+import { Box, Grid, CardMedia, IconButton, Menu, MenuItem, Link } from '@mui/material'
 import MoreVert from '@mui/icons-material/MoreVert'
 
 const fileSize = {
@@ -21,47 +22,30 @@ const breakpoints = {
 }
 
 interface Props {
-    userProfile: IUser,
-    setUserProfile: Dispatch<SetStateAction<IUser>>,
-    setAllFiles: Dispatch<SetStateAction<IFiles[]>>
+    publications: IPublication[],
+    setPublications: Dispatch<SetStateAction<IPublication[]>>
 }
 
-export default function UserFiles({ userProfile, setUserProfile, setAllFiles }: Props) {
+export default function UserFiles({ publications, setPublications }: Props) {
+    const [publicationToDelete, setPublicationToDelete] = useState<IPublication | null>(null)
     const [anchorEl, setAnchorEl] = useState<Element | null>(null)
     const open = Boolean(anchorEl)
-    const [file, setFile] = useState<IFiles>({
-        id: '',
-        url: '',
-        type: '',
-        date: ''
-    })
 
-    function handleClick(e: React.MouseEvent<HTMLButtonElement>, file: IFiles) {
+    function handleClick(e: React.MouseEvent<HTMLButtonElement>, publication: IPublication) {
         setAnchorEl(e.currentTarget)
-        setFile(file)
+        setPublicationToDelete(publication)
     }
 
     function handleClose() {
         setAnchorEl(null)
     }
 
-    async function removeFiles() {
+    async function removePublication() {
         handleClose()
-        const updateFiles = await deleteFiles(file.id, userProfile.userName)
-        setUserProfile({
-            ...userProfile,
-            files: updateFiles
-        })
-        setAllFiles(updateFiles)
-    }
-
-    async function changeProfilePicture() {
-        handleClose()
-        const updatePicture = await changePicture(file.url, userProfile.userName)
-        setUserProfile({
-            ...userProfile,
-            picture: updatePicture
-        })
+        if (publicationToDelete) {
+            const update = await deletePublication(publicationToDelete)
+            setPublications(update)
+        }
     }
 
     return (
@@ -71,38 +55,42 @@ export default function UserFiles({ userProfile, setUserProfile, setAllFiles }: 
                 rowGap={3}
                 sx={{ marginLeft: '40px', width: { ...breakpoints } }}
             >
-                {userProfile?.files?.map((file, index) => {
+                {publications?.map(publication => {
                     return (
                         <Box
-                            key={index}
+                            key={publication?._id}
                             sx={{ display: 'flex', alignItems: 'start' }}
                         >
-                            {file.type === 'image'
-                                ? <CardMedia
-                                    src={file.url}
-                                    component='img'
-                                    alt='Image'
-                                    sx={{
-                                        width: { ...fileSize },
-                                        height: { ...fileSize },
-                                        objectFit: 'contain',
-                                        backgroundColor: 'background.paper'
-                                    }}
-                                />
-                                : <CardMedia
-                                    src={file.url}
-                                    component='video'
-                                    autoPlay muted loop
-                                    sx={{
-                                        width: { ...fileSize },
-                                        height: { ...fileSize },
-                                        objectFit: 'contain',
-                                        backgroundColor: 'background.paper'
-                                    }}
-                                />
-                            }
+                            <NextLink href={`/${publication?.user?.userName}/${publication?._id}`} passHref legacyBehavior>
+                                <Link underline='none'>
+                                    {publication?.files[0]?.type === 'image'
+                                        ? <CardMedia
+                                            src={publication?.files[0]?.url}
+                                            component='img'
+                                            alt='Image'
+                                            sx={{
+                                                width: { ...fileSize },
+                                                height: { ...fileSize },
+                                                objectFit: 'contain',
+                                                backgroundColor: 'background.paper'
+                                            }}
+                                        />
+                                        : <CardMedia
+                                            src={publication?.files[0]?.url}
+                                            component='video'
+                                            autoPlay muted loop
+                                            sx={{
+                                                width: { ...fileSize },
+                                                height: { ...fileSize },
+                                                objectFit: 'contain',
+                                                backgroundColor: 'background.paper'
+                                            }}
+                                        />
+                                    }
+                                </Link>
+                            </NextLink>
                             <IconButton
-                                onClick={(e) => handleClick(e, file)}
+                                onClick={(e) => handleClick(e, publication)}
                                 sx={{ position: 'relative', right: '40px' }}
                             >
                                 <MoreVert />
@@ -124,12 +112,11 @@ export default function UserFiles({ userProfile, setUserProfile, setAllFiles }: 
                         horizontal: 'center'
                     }}
                 >
-                    <MenuItem onClick={removeFiles}>Eliminar</MenuItem>
-                    {file.type === 'image' &&
-                        <MenuItem onClick={changeProfilePicture}>Foto de perfil</MenuItem>
-                    }
+                    <MenuItem onClick={removePublication}>
+                        Eliminar
+                    </MenuItem>
                 </Menu>
-            </Grid>
-        </Box>
+            </Grid >
+        </Box >
     )
 }
