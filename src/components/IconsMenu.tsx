@@ -1,28 +1,22 @@
-import { Dispatch, SetStateAction } from 'react'
-import IUser, { IFiles } from '../types/user'
+import { useState, Dispatch, SetStateAction } from 'react'
+import {IPublication} from '../types/publication'
 import { Box, Divider, Grid, Tooltip, Zoom, IconButton } from '@mui/material'
 import Apps from '@mui/icons-material/Apps'
 import PhotoCamera from '@mui/icons-material/PhotoCamera'
 import Videocam from '@mui/icons-material/Videocam'
 
 interface Props {
-    userProfile: IUser,
-    setUserProfile: Dispatch<SetStateAction<IUser>>,
-    allFiles: IFiles[]
+    publications: IPublication[],
+    setPublications: Dispatch<SetStateAction<IPublication[]>>
 }
 
-export default function IconsMenu({ userProfile, setUserProfile, allFiles }: Props) {
+export default function IconsMenu({ publications, setPublications }: Props) {
+    const [allPublications, setAllPublications] = useState<IPublication[]>(publications)
 
     function filterByFileType(type: string) {
         type === 'all'
-            ? setUserProfile({
-                ...userProfile,
-                files: allFiles
-            })
-            : setUserProfile({
-                ...userProfile,
-                files: allFiles?.filter(file => file.type === type)
-            })
+            ? setPublications(allPublications)
+            : setPublications(allPublications.filter(publication => publication.files[0].type === type))
     }
 
     return (
