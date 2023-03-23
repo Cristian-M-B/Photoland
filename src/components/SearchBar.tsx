@@ -64,7 +64,7 @@ export default function SearchBar({ allUsers }: Props) {
                                         sx={{ paddingLeft: '10px', minHeight: '60px', '&:hover': { backgroundColor: 'background.default' } }}
                                     >
                                         <Avatar
-                                            src={result?.picture}
+                                            src={result?.picture?.url}
                                             variant='rounded'
                                             sx={{ width: '40px', height: '40px' }}
                                         />
