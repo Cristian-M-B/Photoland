@@ -1,22 +1,22 @@
-import IUser, { IFiles } from '../types/user'
 import { Dispatch, SetStateAction } from 'react'
-import { saveFilesToCloudinary, saveFilesToDB } from '../services/user'
+import IUser from '../types/user'
+import { saveFilesToCloudinary } from '../services/publication'
+import { changePicture } from '../services/user'
 import { Grid, Avatar, Typography } from '@mui/material'
 
 interface Props {
     userProfile: IUser,
-    setUserProfile: Dispatch<SetStateAction<IUser>>,
-    setAllFiles: Dispatch<SetStateAction<IFiles[]>>
+    setUserProfile: Dispatch<SetStateAction<IUser>>
 }
 
-export default function ProfileData({ userProfile, setUserProfile, setAllFiles }: Props) {
+export default function ProfileData({ userProfile, setUserProfile }: Props) {
 
-    function exploreFiles() {
+    function explorePhotos() {
         let input = document.getElementById('explore')
         if (input) (input as HTMLInputElement).click()
     }
 
-    async function uploadFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    async function uploadPhoto(e: React.ChangeEvent<HTMLInputElement>) {
         const files = e.target.files
         let mediaFiles = []
         if (files) {
@@ -26,12 +26,11 @@ export default function ProfileData({ userProfile, setUserProfile, setAllFiles }
         }
         const fileData = await saveFilesToCloudinary(mediaFiles)
         if (fileData) {
-            const updateFiles = await saveFilesToDB(fileData, userProfile?.userName)
+            const update = await changePicture(fileData[0], userProfile?.userName)
             setUserProfile({
                 ...userProfile,
-                files: updateFiles
+                picture: update
             })
-            setAllFiles(updateFiles)
         }
     }
 
@@ -44,11 +43,11 @@ export default function ProfileData({ userProfile, setUserProfile, setAllFiles }
             sx={{ marginTop: '5vh' }}
         >
             <button
-                onClick={exploreFiles}
+                onClick={explorePhotos}
                 style={{ border: 'none', backgroundColor: 'transparent', cursor: 'pointer' }}
             >
                 <Avatar
-                    src={userProfile?.picture}
+                    src={userProfile?.picture?.url}
                     alt='Imagen de perfil'
                     sx={{ width: '100px', height: '100px' }}
                 />
@@ -56,9 +55,8 @@ export default function ProfileData({ userProfile, setUserProfile, setAllFiles }
             <input
                 id='explore'
                 type='file'
-                accept='image/*, video/*'
-                multiple
-                onChange={(e) => uploadFiles(e)}
+                accept='image/*'
+                onChange={(e) => uploadPhoto(e)}
                 style={{ display: 'none' }}
             />
             <Grid item>
