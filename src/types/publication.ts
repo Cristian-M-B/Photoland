@@ -11,7 +11,6 @@ export interface IPublication {
     user: IUser,
     files: IFile[],
     date: string,
-    title?: string,
-    description?: string,
+    text?: string,
     likes: string[]
 }
