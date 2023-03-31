@@ -17,7 +17,8 @@ const styles = {
     borderRadius: '1px',
     backgroundColor: 'background.paper',
     overflowX: 'hidden',
-    position: 'absolute'
+    position: 'absolute',
+    zIndex: '1'
 }
 
 interface Props {
