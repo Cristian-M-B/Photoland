@@ -11,10 +11,7 @@ const publicationSchema = new Schema({
         date: {
             type: String
         },
-        title: {
-            type: String
-        },
-        description: {
+        text: {
             type: String
         },
         likes: {
