@@ -6,11 +6,12 @@ import { getDate } from '../../utils/functions'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        await connectionDB()
+        connectionDB()
         const user = await User.findOne({ userName: req.query.userName })
         const newPublication = new Publication({
             user: user,
-            files: req.body,
+            files: req.body.files,
+            text: req.body.text,
             date: getDate()
         })
         await newPublication.save()
