@@ -38,9 +38,9 @@ export async function saveFilesToCloudinary(files: File[]) {
     }
 }
 
-export async function saveFilesToDB(files: IFile[], text: string, userName: string) {
+export async function saveFilesToDB(files: IFile[], text: string, userID: string) {
     try {
-        const { data } = await axios.post(`/api/postPublication?userName=${userName}`, { files, text })
+        const { data } = await axios.post(`/api/postPublication?userID=${userID}`, { files, text })
         return data
     } catch (error) {
         console.log(error)
