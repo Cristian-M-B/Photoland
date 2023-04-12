@@ -14,10 +14,11 @@ const containerStyles = {
 
 interface Props {
     publications: IPublication[],
-    setPublications: Dispatch<SetStateAction<IPublication[]>>
+    setPublications: Dispatch<SetStateAction<IPublication[]>>,
+    userID: string
 }
 
-export default function PublicationBar({ publications, setPublications }: Props) {
+export default function PublicationBar({ publications, setPublications, userID }: Props) {
     const [text, setText] = useState<string>('')
     let files: File[] = []
 
@@ -45,7 +46,7 @@ export default function PublicationBar({ publications, setPublications }: Props)
         if (files.length > 0) {
             const data = await saveFilesToCloudinary(files)
             if (data) {
-                const newPublication = await saveFilesToDB(data, text, 'CrisMaxBar')
+                const newPublication = await saveFilesToDB(data, text, userID)
                 setPublications([newPublication, ...publications])
             }
             setText('')
