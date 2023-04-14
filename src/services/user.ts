@@ -18,3 +18,12 @@ export async function changePicture(picture: IFile, userName: string) {
         console.log(error)
     }
 }
+
+export async function getUser(email: string, password: string) {
+    try {
+        const { data } = await axios.post('/api/getUser', {email, password})
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+}
