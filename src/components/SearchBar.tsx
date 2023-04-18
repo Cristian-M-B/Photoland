@@ -28,12 +28,15 @@ interface Props {
 export default function SearchBar({ allUsers }: Props) {
     const [search, setSearch] = useState<string>('')
     const [results, setResults] = useState<IUser[]>([])
+    const [noResults, setNoResults] = useState<string>('')
 
     useEffect(() => {
         search &&
             setResults(allUsers.filter(user => user.fullName.toLowerCase().includes(search.toLowerCase())))
+        search && setNoResults('Ningún usuario coincide con tu búsqueda')
         return () => {
             setResults([])
+            setNoResults('')
         }
     }, [search])
 
@@ -49,9 +52,9 @@ export default function SearchBar({ allUsers }: Props) {
                             <Search />
                         </InputAdornment>
                 }}
-                sx={{ ...size, backgroundColor: 'background.paper' }}
+                sx={{ ...size, backgroundColor: 'background.paper', borderRadius: '1vh' }}
             />
-            {search &&
+            {search && results.length > 0 &&
                 <Grid sx={{ ...size, ...styles }}>
                     {results?.map(result => (
                         <Card key={result.userName}>
@@ -83,6 +86,18 @@ export default function SearchBar({ allUsers }: Props) {
                             <Divider />
                         </Card>
                     ))}
+                </Grid>
+            }
+            {search && results.length === 0 && noResults &&
+                <Grid
+                    container
+                    justifyContent='center'
+                    alignItems='center'
+                    sx={{ ...size, ...styles, minHeight: '60px' }}
+                >
+                    <Typography>
+                        {noResults}
+                    </Typography>
                 </Grid>
             }
         </form>
