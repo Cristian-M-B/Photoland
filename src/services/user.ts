@@ -21,7 +21,16 @@ export async function changePicture(picture: IFile, userName: string) {
 
 export async function getUser(email: string, password: string) {
     try {
-        const { data } = await axios.post('/api/getUser', {email, password})
+        const { data } = await axios.post('/api/getUser', { email, password })
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function logOut() {
+    try {
+        const { data } = await axios.delete('/api/deleteUser')
         return data
     } catch (error) {
         console.log(error)
