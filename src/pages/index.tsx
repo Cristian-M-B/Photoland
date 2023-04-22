@@ -1,25 +1,27 @@
-import Head from 'next/head'
 import { useState } from 'react'
-import { Inter } from '@next/font/google'
+import Head from 'next/head'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { getCookie } from 'cookies-next'
+import jwt from 'jsonwebtoken'
 import connectionDB from '../utils/mongodb'
 import User from '../models/user'
 import Publication from '../models/publication'
 import IUser from '../types/user'
 import { IPublication } from '../types/publication'
-import SearchBar from '../components/SearchBar'
+import NavBar from '../components/NavBar'
 import PublicationBar from '../components/PublicationBar'
 import Publications from '../components/Publications'
 import { Grid } from '@mui/material'
 
-const inter = Inter({ subsets: ['latin'] })
-
 interface Props {
   allUsers: IUser[],
-  allPublications: IPublication[]
+  allPublications: IPublication[],
+  user: IUser
 }
 
-export default function Home({ allUsers, allPublications }: Props) {
+export default function Home({ allUsers, allPublications, user }: Props) {
   const [publications, setPublications] = useState<IPublication[]>(allPublications)
+  const [currentUser, setCurrentUser] = useState<IUser>(user)
 
   return (
     <>
@@ -35,23 +37,49 @@ export default function Home({ allUsers, allPublications }: Props) {
         alignItems='center'
         gap={2}
       >
-        <SearchBar allUsers={allUsers} />
-        <PublicationBar publications={publications} setPublications={setPublications} />
+        <NavBar allUsers={allUsers} currentUser={currentUser} setCurrentUser={setCurrentUser} />
+        {currentUser?._id &&
+          <PublicationBar publications={publications} setPublications={setPublications} userID={currentUser._id} />
+        }
         <Publications publications={publications} />
       </Grid>
     </>
   )
 }
 
-export async function getServerSideProps() {
+interface Props {
+  req: NextApiRequest,
+  res: NextApiResponse
+}
+
+interface Token {
+  userID: string,
+  iat: number,
+  expiresIn: number
+}
+
+export async function getServerSideProps({ req, res }: Props) {
   connectionDB()
   const allUsers = await User.find({}).lean()
   const allPublications = await Publication.find({}).populate('user').lean()
 
+  const token = getCookie('Photoland', { req, res })
+  let userID: string = ''
+  let user
+
+  try {
+    const session = jwt.verify((token as string), process.env.JWT_SECRET || '')
+    userID = (session as Token).userID
+    user = await User.findById(userID).lean()
+  } catch (error) {
+    // console.log(error)
+  }
+
   return {
     props: {
       allUsers: JSON.parse(JSON.stringify(allUsers)),
-      allPublications: JSON.parse(JSON.stringify(allPublications.reverse()))
+      allPublications: JSON.parse(JSON.stringify(allPublications.reverse())),
+      user: JSON.parse(JSON.stringify(user || null))
     }
   }
 }
