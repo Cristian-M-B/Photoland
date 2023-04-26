@@ -6,7 +6,7 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera'
 import Videocam from '@mui/icons-material/Videocam'
 
 const containerStyles = {
-    width: '40%',
+    width: { xs: '90%', sm: '65%', md: '40%' },
     padding: '15px',
     border: '1px solid #dbdbdb',
     backgroundColor: 'background.paper'
