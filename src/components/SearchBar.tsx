@@ -18,7 +18,7 @@ const styles = {
     backgroundColor: 'background.paper',
     overflowX: 'hidden',
     position: 'absolute',
-    zIndex: '1'
+    zIndex: '20'
 }
 
 interface Props {
