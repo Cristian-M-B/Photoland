@@ -16,12 +16,12 @@ import { Grid } from '@mui/material'
 interface Props {
   allUsers: IUser[],
   allPublications: IPublication[],
-  user: IUser
+  userSession: IUser
 }
 
-export default function Home({ allUsers, allPublications, user }: Props) {
+export default function Home({ allUsers, allPublications, userSession }: Props) {
   const [publications, setPublications] = useState<IPublication[]>(allPublications)
-  const [currentUser, setCurrentUser] = useState<IUser>(user)
+  const [currentUser, setCurrentUser] = useState<IUser>(userSession)
 
   return (
     <>
@@ -65,12 +65,12 @@ export async function getServerSideProps({ req, res }: Props) {
 
   const token = getCookie('Photoland', { req, res })
   let userID: string = ''
-  let user
+  let userSession
 
   try {
     const session = jwt.verify((token as string), process.env.JWT_SECRET || '')
     userID = (session as Token).userID
-    user = await User.findById(userID).lean()
+    userSession = await User.findById(userID).lean()
   } catch (error) {
     // console.log(error)
   }
@@ -79,7 +79,7 @@ export async function getServerSideProps({ req, res }: Props) {
     props: {
       allUsers: JSON.parse(JSON.stringify(allUsers)),
       allPublications: JSON.parse(JSON.stringify(allPublications.reverse())),
-      user: JSON.parse(JSON.stringify(user || null))
+      userSession: JSON.parse(JSON.stringify(userSession || null))
     }
   }
 }
