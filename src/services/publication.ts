@@ -55,3 +55,12 @@ export async function deletePublication(publication: IPublication) {
         console.log(error)
     }
 }
+
+export async function addLike(publicationID: string, userLike: string) {
+    try {
+        const { data } = await axios.post('/api/putPublication', { publicationID, userLike })
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+}
