@@ -1,5 +1,6 @@
 import NextLink from 'next/link'
 import { IPublication } from '../types/publication'
+import getTime from '../utils/timeago'
 import { Grid, Box, Avatar, CardMedia, Typography, Link } from '@mui/material'
 import Videocam from '@mui/icons-material/Videocam'
 import AutoAwesomeMotion from '@mui/icons-material/AutoAwesomeMotion'
@@ -64,7 +65,7 @@ export default function Publications({ publications }: Props) {
                         </Link>
                     </NextLink>
                     <Typography>
-                        {publication?.date}
+                        {getTime(publication?.date)}
                     </Typography>
                 </Grid>
             )}
