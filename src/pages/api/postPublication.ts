@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import connectionDB from '../../utils/mongodb'
 import User from '../../models/user'
 import Publication from '../../models/publication'
-import { getDate } from '../../utils/functions'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
@@ -12,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             user: user,
             files: req.body.files,
             text: req.body.text,
-            date: getDate()
+            date: Date.now()
         })
         await newPublication.save()
         res.status(200).json(newPublication)
