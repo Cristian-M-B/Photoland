@@ -8,6 +8,10 @@ export default function handler(req, res) {
         console.log(onlineUsers)
     }
 
+    function getUser(onlineUserID) {
+        return onlineUsers.find(user => user._id === onlineUserID)
+    }
+
     function removeUser(currentUser){
         onlineUsers = onlineUsers.filter(user => user._id !== currentUser._id)
         console.log(onlineUsers)
@@ -19,10 +23,16 @@ export default function handler(req, res) {
 
         io.on('connection', (socket) => {
             console.log(`Connected: ${socket.id}`)
-            socket.on('new user', (currentUser) => {
+            socket.on('newUser', (currentUser) => {
                 addUser(currentUser, socket.id)
             })
-            socket.on('delete user', (currentUser) => {
+            socket.on('newNotification', (publicationUserID, notification) => {
+                const user = getUser(publicationUserID)
+                if(user){
+                    socket.emit('showNotification', notification)
+                }
+            })
+            socket.on('deleteUser', (currentUser) => {
                 removeUser(currentUser)
             })
             socket.on('disconnect', () => {
