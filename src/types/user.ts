@@ -7,8 +7,22 @@ export interface IUserData {
     password: string
 }
 
+export enum notificationsTypes {
+    like = 'like',
+    comment = 'comment',
+    message = 'message'
+}
+
+export interface INotification {
+    type: notificationsTypes,
+    isRead: boolean,
+    isIgnored: boolean,
+    user: IUserData
+}
+
 export default interface IUser extends IUserData {
     _id: string,
     private: boolean,
-    picture?: IFile
+    picture?: IFile,
+    notifications: INotification[]
 }
