@@ -29,6 +29,9 @@ const userSchema = new Schema({
         },
         picture: {
             type: Object
+        },
+        notifications: {
+            type: Array
         }
     },
     {
