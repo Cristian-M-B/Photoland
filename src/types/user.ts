@@ -17,7 +17,8 @@ export interface INotification {
     type: notificationsTypes,
     isRead: boolean,
     isIgnored: boolean,
-    user: IUserData
+    publicationID: string,
+    user: IUser
 }
 
 export default interface IUser extends IUserData {
