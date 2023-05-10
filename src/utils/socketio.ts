@@ -20,9 +20,10 @@ export function newNotification(publicationUserID: string, notification: INotifi
 
 export function showNotification(notifications: INotification[], setNotifications: Dispatch<SetStateAction<INotification[]>>) {
     socket.on('showNotification', notification => {
+        const copyNotifications = [...notifications]
         setNotifications([
-            ...notifications,
-            notification
+            notification,
+            ...copyNotifications
         ])
     })
 }
