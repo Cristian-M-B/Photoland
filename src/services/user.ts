@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { IUserData } from '../types/user'
+import { IUserData, INotification } from '../types/user'
 import { IFile } from '../types/publication'
 
 export async function addNewUser(inputs: IUserData) {
@@ -32,6 +32,14 @@ export async function logOut() {
     try {
         const { data } = await axios.delete('/api/deleteUser')
         return data
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function addNotification(publicationUserID: string, notification: INotification) {
+    try {
+        await axios.put('/api/putUser?notification=true', {publicationUserID, notification})
     } catch (error) {
         console.log(error)
     }
