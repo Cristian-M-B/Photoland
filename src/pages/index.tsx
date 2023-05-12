@@ -70,7 +70,14 @@ export async function getServerSideProps({ req, res }: Props) {
   try {
     const session = jwt.verify((token as string), process.env.JWT_SECRET || '')
     userID = (session as Token).userID
-    userSession = await User.findById(userID).lean()
+    userSession = await User.findById(userID).populate({
+      path: 'notifications',
+      populate: {
+        path: 'user',
+        model: 'User',
+        select: 'userName picture'
+      }
+    }).lean()
   } catch (error) {
     // console.log(error)
   }
