@@ -4,11 +4,13 @@ import connectionDB from '../../utils/mongodb'
 import Publication from '../../models/publication'
 import User from '../../models/user'
 import { IPublication } from '../../types/publication'
-import IUser from '../../types/user'
+import IUser, { INotification, notificationsTypes } from '../../types/user'
 import { addLike } from '../../services/publication'
+import { addNotification } from '../../services/user'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getCookie } from 'cookies-next'
 import jwt from 'jsonwebtoken'
+import { newNotification } from '../../utils/socketio'
 import NavBar from '../../components/NavBar'
 import { Grid, CardMedia, Box, Avatar, Typography, Link, Button } from '@mui/material'
 import Carousel from 'react-material-ui-carousel'
@@ -43,7 +45,16 @@ export default function Publications({ publication, userSession, allUsers }: Pro
     const [currentPublication, setCurrentPublication] = useState<IPublication>(publication)
 
     async function handleLike() {
+        const notification: INotification = {
+            type: notificationsTypes.like,
+            isRead: false,
+            isIgnored: false,
+            publicationID: currentPublication._id,
+            user: currentUser
+        }
         const updateLikes = await addLike(publication._id, currentUser._id)
+        newNotification(publication.user._id, notification)
+        await addNotification(publication.user._id, notification)
         setCurrentPublication({
             ...currentPublication,
             likes: updateLikes
@@ -134,7 +145,14 @@ export async function getServerSideProps({ params, req, res }: Props) {
     try {
         const session = jwt.verify((token as string), process.env.JWT_SECRET || '')
         userID = (session as Token).userID
-        userSession = await User.findById(userID).lean()
+        userSession = await User.findById(userID).populate({
+            path: 'notifications',
+            populate: {
+                path: 'user',
+                model: 'User',
+                select: 'userName picture'
+            }
+        }).lean()
     } catch (error) {
         // console.log(error)
     }
