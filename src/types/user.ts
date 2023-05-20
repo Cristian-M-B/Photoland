@@ -14,6 +14,7 @@ export enum notificationsTypes {
 }
 
 export interface INotification {
+    _id?: string,
     type: notificationsTypes,
     isRead: boolean,
     isIgnored: boolean,
