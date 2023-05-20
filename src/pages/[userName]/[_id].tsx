@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import NextLink from 'next/link'
 import connectionDB from '../../utils/mongodb'
 import Publication from '../../models/publication'
@@ -43,6 +43,10 @@ interface Props {
 export default function Publications({ publication, userSession, allUsers }: Props) {
     const [currentUser, setCurrentUser] = useState<IUser>(userSession)
     const [currentPublication, setCurrentPublication] = useState<IPublication>(publication)
+
+    useEffect(() => {
+        setCurrentPublication(publication)
+    }, [publication])
 
     async function handleLike() {
         const notification: INotification = {
