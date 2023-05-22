@@ -39,7 +39,16 @@ export async function logOut() {
 
 export async function addNotification(publicationUserID: string, notification: INotification) {
     try {
-        await axios.put('/api/putUser?notification=true', {publicationUserID, notification})
+        await axios.put('/api/putUser?notification=true', { publicationUserID, notification })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function notificationRead(userID: string, notificationID: string) {
+    try {
+        const { data } = await axios.put('/api/putUser?notificationRead=true', { userID, notificationID })
+        return data
     } catch (error) {
         console.log(error)
     }
