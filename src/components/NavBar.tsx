@@ -1,8 +1,10 @@
 import { useState, useEffect, Dispatch, SetStateAction } from 'react'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 import IUser, { INotification } from '../types/user'
 import SearchBar from './SearchBar'
 import Menu from './Menu'
+import { notificationRead } from '../services/user'
 import connect, { newUser, showNotification, deleteUser, disconnect } from '../utils/socketio'
 import { Link, Typography, Avatar, IconButton, Badge, Grid, Card, Divider } from '@mui/material'
 import Notifications from '@mui/icons-material/Notifications'
@@ -38,6 +40,13 @@ const styles = {
     transform: 'translate(-100%)'
 }
 
+const buttonStyles = {
+    border: 'none',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    padding: '0px'
+}
+
 interface Props {
     allUsers: IUser[],
     currentUser: IUser,
@@ -45,8 +54,9 @@ interface Props {
 }
 
 export default function NavBar({ allUsers, currentUser, setCurrentUser }: Props) {
-    const filteredNotifications = currentUser?.notifications?.filter(notification => notification.isRead === false)
+    const filteredNotifications = currentUser?.notifications?.filter(notification => notification?.isRead === false)
     const theme = useTheme()
+    const router = useRouter()
     const [open, setOpen] = useState<boolean>(false)
     const [notifications, setNotifications] = useState<INotification[]>(filteredNotifications)
     const [notificationIcon, setNotificationIcon] = useState<boolean>(false)
@@ -70,6 +80,12 @@ export default function NavBar({ allUsers, currentUser, setCurrentUser }: Props)
             }
         }
     }, [currentUser?._id])
+
+    async function handleClick(url: string, notificationID: string) {
+        const updateNotifications = await notificationRead(currentUser._id, notificationID)
+        setNotifications(updateNotifications)
+        router.push(url)
+    }
 
     return (
         <nav style={{ ...navStyles, backgroundColor: theme.palette.primary.main }}>
@@ -95,31 +111,32 @@ export default function NavBar({ allUsers, currentUser, setCurrentUser }: Props)
                 }
                 {notificationIcon &&
                     <Grid sx={{ ...size, ...styles }}>
-                        {notifications?.map((notification, index) => (
-                            <Card key={index}>
-                                <NextLink href={`/${notification?.user?.userName}/${notification.publicationID}`} passHref legacyBehavior>
-                                    <Link underline='none'>
-                                        <Grid
-                                            container
-                                            alignItems='center'
-                                            gap={2}
-                                            wrap='nowrap'
-                                            sx={{ paddingLeft: '10px', minHeight: '60px', '&:hover': { backgroundColor: 'background.default' } }}
-                                        >
-                                            <Avatar
-                                                src={notification?.user?.picture?.url}
-                                                variant='rounded'
-                                                sx={{ width: '40px', height: '40px' }}
-                                            />
-                                            <Typography>
-                                                {notification.type === 'like'
-                                                    ? `A ${notification?.user?.userName} le gusta tu publicación.`
-                                                    : `${notification?.user?.userName} ha comentado tu publicación.`
-                                                }
-                                            </Typography>
-                                        </Grid>
-                                    </Link>
-                                </NextLink>
+                        {notifications?.map((notification) => (
+                            <Card key={notification._id}>
+                                <button
+                                    onClick={() => handleClick(`/${currentUser?.userName}/${notification.publicationID}`, notification._id as string)}
+                                    style={buttonStyles}
+                                >
+                                    <Grid
+                                        container
+                                        alignItems='center'
+                                        gap={2}
+                                        wrap='nowrap'
+                                        sx={{ paddingLeft: '10px', minHeight: '60px', '&:hover': { backgroundColor: 'primary.light' } }}
+                                    >
+                                        <Avatar
+                                            src={notification?.user?.picture?.url}
+                                            variant='rounded'
+                                            sx={{ width: '40px', height: '40px' }}
+                                        />
+                                        <Typography align='left'>
+                                            {notification.type === 'like'
+                                                ? `A ${notification?.user?.userName} le gusta tu publicación.`
+                                                : `${notification?.user?.userName} ha comentado tu publicación.`
+                                            }
+                                        </Typography>
+                                    </Grid>
+                                </button>
                                 <Divider />
                             </Card>
                         ))}
