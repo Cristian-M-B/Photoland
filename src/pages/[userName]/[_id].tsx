@@ -57,12 +57,12 @@ export default function Publications({ publication, userSession, allUsers }: Pro
             user: currentUser
         }
         const updateLikes = await addLike(publication._id, currentUser._id)
-        newNotification(publication.user._id, notification)
-        await addNotification(publication.user._id, notification)
         setCurrentPublication({
             ...currentPublication,
             likes: updateLikes
         })
+        newNotification(publication.user._id, notification)
+        await addNotification(publication.user._id, notification)
     }
 
     return (
