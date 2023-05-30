@@ -53,3 +53,12 @@ export async function notificationRead(userID: string, notificationID: string) {
         console.log(error)
     }
 }
+
+export async function allNotificationsRead(userID: string) {
+    try {
+        const { data } = await axios.put('/api/putUser?allNotificationsRead=true', {userID})
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+}
