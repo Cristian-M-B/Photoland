@@ -28,12 +28,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             })
             const filteredNotifications = updateNotifications.filter((notification: INotification) => notification.isRead === false)
-            await User.findByIdAndUpdate(req.body.userID, { notifications: filteredNotifications })
+            await User.findByIdAndUpdate(req.body.userID, { notifications: updateNotifications })
             res.status(200).json(filteredNotifications)
         } catch (error) {
             console.log(error)
         }
-    } else {
+    } else if(req?.query?.allNotificationsRead === 'true'){
+        const user = await User.findById(req.body.userID).lean()
+        const updateNotifications: INotification[] = user.notifications.map((notification: INotification) => {
+            return {...notification, isRead: true}
+        })
+        await User.findByIdAndUpdate(req.body.userID, { notifications: updateNotifications })
+        res.status(200).json([])
+    }else {
         try {
             const user = await User.findOne({ userName: req.query.userName }).lean()
             if (user?.picture?.url) {
