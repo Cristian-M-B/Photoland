@@ -4,9 +4,9 @@ import { useRouter } from 'next/router'
 import IUser, { INotification } from '../types/user'
 import SearchBar from './SearchBar'
 import Menu from './Menu'
-import { notificationRead } from '../services/user'
+import { notificationRead, allNotificationsRead } from '../services/user'
 import connect, { newUser, showNotification, deleteUser, disconnect } from '../utils/socketio'
-import { Link, Typography, Avatar, IconButton, Badge, Grid, Card, Divider } from '@mui/material'
+import { Link, Typography, Avatar, IconButton, Badge, Grid, Card, Divider, Button } from '@mui/material'
 import Notifications from '@mui/icons-material/Notifications'
 import { useTheme } from '@mui/material/styles'
 
@@ -28,7 +28,7 @@ const size = {
 }
 
 const styles = {
-    maxHeight: '242px',
+    maxHeight: '272px',
     border: '1px solid #dbdbdb',
     borderRadius: '1px',
     backgroundColor: 'background.paper',
@@ -37,7 +37,16 @@ const styles = {
     zIndex: '20',
     top: '12%',
     left: '99.99%',
-    transform: 'translate(-100%)'
+    transform: 'translate(-100%)',
+    '&::-webkit-scrollbar': {
+        width: '12px'
+    },
+    '&::-webkit-scrollbar-track': {
+        backgroundColor: 'rgb(219, 219, 219, 0.5)'
+    },
+    '&::-webkit-scrollbar-thumb': {
+        backgroundColor: 'rgb(219, 219, 219)'
+    }
 }
 
 const buttonStyles = {
@@ -87,6 +96,11 @@ export default function NavBar({ allUsers, currentUser, setCurrentUser }: Props)
         router.push(url)
     }
 
+    async function handleAllNotifications() {
+        const updateNotifications = await allNotificationsRead(currentUser._id)
+        setNotifications(updateNotifications)
+    }
+
     return (
         <nav style={{ ...navStyles, backgroundColor: theme.palette.primary.main }}>
             <NextLink href='/' passHref legacyBehavior>
@@ -111,6 +125,19 @@ export default function NavBar({ allUsers, currentUser, setCurrentUser }: Props)
                 }
                 {notificationIcon &&
                     <Grid sx={{ ...size, ...styles }}>
+                        {notifications.length > 0 &&
+                            <Grid
+                                container
+                                justifyContent='center'
+                                alignItems='center'
+                                onClick={handleAllNotifications}
+                                sx={{ cursor: 'pointer', height: '35px', '&:hover': { backgroundColor: 'primary.light', color: 'background.default' } }}
+                            >
+                                <Typography variant='body2'>
+                                    Marcar las notificaciones como leídas
+                                </Typography>
+                            </Grid>
+                        }
                         {notifications?.map((notification) => (
                             <Card key={notification._id}>
                                 <button
@@ -122,7 +149,7 @@ export default function NavBar({ allUsers, currentUser, setCurrentUser }: Props)
                                         alignItems='center'
                                         gap={2}
                                         wrap='nowrap'
-                                        sx={{ paddingLeft: '10px', minHeight: '60px', '&:hover': { backgroundColor: 'primary.light' } }}
+                                        sx={{ paddingLeft: '10px', minHeight: '60px', '&:hover': { backgroundColor: 'primary.light', color: 'background.default' } }}
                                     >
                                         <Avatar
                                             src={notification?.user?.picture?.url}
