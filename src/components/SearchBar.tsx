@@ -18,7 +18,13 @@ const styles = {
     backgroundColor: 'background.paper',
     overflowX: 'hidden',
     position: 'absolute',
-    zIndex: '20'
+    zIndex: '20',
+    '&::-webkit-scrollbar': {
+        backgroundColor: 'rgb(219, 219, 219, 0.5)'
+    },
+    '&::-webkit-scrollbar-thumb': {
+        backgroundColor: 'rgb(219, 219, 219)'
+    }
 }
 
 interface Props {
@@ -59,13 +65,13 @@ export default function SearchBar({ allUsers }: Props) {
                     {results?.map(result => (
                         <Card key={result.userName}>
                             <NextLink href={`/${result.userName}`} passHref legacyBehavior>
-                                <Link underline='none' onClick={() => setSearch('')}>
+                                <Link underline='none' color='inherit' onClick={() => setSearch('')}>
                                     <Grid
                                         container
                                         alignItems='center'
                                         gap={2}
                                         wrap='nowrap'
-                                        sx={{ paddingLeft: '10px', minHeight: '60px', '&:hover': { backgroundColor: 'background.default' } }}
+                                        sx={{ paddingLeft: '10px', minHeight: '60px', '&:hover': { backgroundColor: 'primary.light', color: 'background.default' } }}
                                     >
                                         <Avatar
                                             src={result?.picture?.url}
