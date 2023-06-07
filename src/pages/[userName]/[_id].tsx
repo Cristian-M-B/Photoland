@@ -4,15 +4,13 @@ import connectionDB from '../../utils/mongodb'
 import Publication from '../../models/publication'
 import User from '../../models/user'
 import { IPublication } from '../../types/publication'
-import IUser, { INotification, notificationsTypes } from '../../types/user'
-import { addLike } from '../../services/publication'
-import { addNotification } from '../../services/user'
+import IUser from '../../types/user'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getCookie } from 'cookies-next'
 import jwt from 'jsonwebtoken'
-import { newNotification } from '../../utils/socketio'
 import NavBar from '../../components/NavBar'
-import { Grid, CardMedia, Box, Avatar, Typography, Link, Button } from '@mui/material'
+import LikeButton from '../../components/LikeButton'
+import { Grid, CardMedia, Box, Avatar, Typography, Link } from '@mui/material'
 import Carousel from 'react-material-ui-carousel'
 
 const carouselStyles = {
@@ -47,23 +45,6 @@ export default function Publications({ publication, userSession, allUsers }: Pro
     useEffect(() => {
         setCurrentPublication(publication)
     }, [publication])
-
-    async function handleLike() {
-        const notification: INotification = {
-            type: notificationsTypes.like,
-            isRead: false,
-            isIgnored: false,
-            publicationID: currentPublication._id,
-            user: currentUser
-        }
-        const updateLikes = await addLike(publication._id, currentUser._id)
-        setCurrentPublication({
-            ...currentPublication,
-            likes: updateLikes
-        })
-        newNotification(publication.user._id, notification)
-        await addNotification(publication.user._id, notification)
-    }
 
     return (
         <div>
@@ -110,17 +91,11 @@ export default function Publications({ publication, userSession, allUsers }: Pro
                     <Typography>
                         {currentPublication?.text}
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        {currentUser?._id &&
-                            (currentPublication?.likes?.some(post => post == currentUser?._id)
-                                ? <Typography>A ti te gusta</Typography>
-                                : <Button onClick={handleLike}>Me gusta</Button>
-                            )
-                        }
-                        {currentPublication?.likes?.length > 0 &&
-                            <Typography sx={{ marginLeft: '10px' }}>{currentPublication?.likes?.length} Me gusta</Typography>
-                        }
-                    </Box>
+                    <LikeButton
+                        currentUser={currentUser}
+                        currentPublication={currentPublication}
+                        setCurrentPublication={setCurrentPublication}
+                    />
                 </Grid>
             </Grid>
         </div>
