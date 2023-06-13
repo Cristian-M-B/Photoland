@@ -29,7 +29,8 @@ export default function handler(req, res) {
             socket.on('newNotification', (publicationUserID, notification) => {
                 const user = getUser(publicationUserID)
                 if(user){
-                    socket.emit('showNotification', notification)
+                    // socket.emit('showNotification', notification)
+                    io.to(user.socketID).emit('showNotification', notification)
                 }
             })
             socket.on('deleteUser', (currentUser) => {
