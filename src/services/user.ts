@@ -62,3 +62,12 @@ export async function allNotificationsRead(userID: string) {
         console.log(error)
     }
 }
+
+export async function getFriend(id: string) {
+    try {
+        const {data} = await axios.get(`/api/getUser?id=${id}`)
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+}
