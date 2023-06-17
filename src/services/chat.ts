@@ -24,3 +24,12 @@ export async function addMessage(message: IMessage) {
         console.log(error)
     }
 }
+
+export async function getConversation(userIdOne: string, userIdTwo: string) {
+    try {
+        const { data } = await axios.get(`api/conversation?userIdOne=${userIdOne}&userIdTwo=${userIdTwo}`)
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+}
