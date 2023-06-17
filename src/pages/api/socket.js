@@ -4,7 +4,7 @@ export default function handler(req, res) {
     let onlineUsers = []
 
     function addUser(currentUser, socketID) {
-        !onlineUsers.some(user => user._id === currentUser._id) && onlineUsers.push({...currentUser, socketID})
+        !onlineUsers.some(user => user._id === currentUser._id) && onlineUsers.push({ ...currentUser, socketID })
         console.log(onlineUsers)
     }
 
@@ -12,7 +12,7 @@ export default function handler(req, res) {
         return onlineUsers.find(user => user._id === onlineUserID)
     }
 
-    function removeUser(currentUser){
+    function removeUser(currentUser) {
         onlineUsers = onlineUsers.filter(user => user._id !== currentUser._id)
         console.log(onlineUsers)
     }
@@ -25,13 +25,18 @@ export default function handler(req, res) {
             console.log(`Connected: ${socket.id}`)
             socket.on('newUser', (currentUser) => {
                 addUser(currentUser, socket.id)
+                socket.emit('getAllOnlineUsers', onlineUsers)
             })
             socket.on('newNotification', (publicationUserID, notification) => {
                 const user = getUser(publicationUserID)
-                if(user){
+                if (user) {
                     // socket.emit('showNotification', notification)
                     io.to(user.socketID).emit('showNotification', notification)
                 }
+            })
+            socket.on('newMessage', ({ receiverID, message }) => {
+                const user = getUser(receiverID)
+                io.to(user?.socketID).emit('showMessage', message)
             })
             socket.on('deleteUser', (currentUser) => {
                 removeUser(currentUser)
@@ -40,7 +45,7 @@ export default function handler(req, res) {
                 console.log('Disconnected')
             })
         })
-        
+
         res.socket.server.io = io
     } else {
         console.log('socket.io already running')
