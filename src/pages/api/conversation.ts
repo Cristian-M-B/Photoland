@@ -16,15 +16,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
     }
     if (req.method === 'GET') {
-        try {
-            const conversation = await Conversation.find({
-                members: {
-                    $in: [req.query.userID]
-                }
-            })
-            res.status(200).json(conversation)
-        } catch (error) {
-            console.log(error)
+        if(req?.query?.userIdTwo){
+            try {
+                const conversation = await Conversation.findOne({
+                    members: {
+                        $all: [req.query.userIdOne, req.query.userIdTwo]
+                    }
+                })
+                res.status(200).json(conversation)
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            try {
+                const conversation = await Conversation.find({
+                    members: {
+                        $in: [req.query.userID]
+                    }
+                })
+                res.status(200).json(conversation)
+            } catch (error) {
+                console.log(error)
+            }
         }
     }
 }
