@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
 import { io, Socket } from 'socket.io-client'
 import IUser, { INotification } from '../types/user'
+import IMessage from '../types/message'
 
 let socket: Socket
 const PHOTOLAND_URL = process.env.PHOTOLAND_URL || ''
@@ -25,6 +26,25 @@ export function showNotification(notifications: INotification[], setNotification
             notification,
             ...copyNotifications
         ])
+    })
+}
+
+export function getAllOnlineUsers(setOnlineUsers: Dispatch<SetStateAction<IUser[]>>) {
+    socket.on('getAllOnlineUsers', onlineUsers => {
+        setOnlineUsers(onlineUsers)
+    })
+}
+
+export function showMessage(setArrivalMessage: Dispatch<SetStateAction<IMessage | undefined>>) {
+    socket.on('showMessage', message => {
+        setArrivalMessage(message)
+    })
+}
+
+export function newMessageSocket(receiverID: string, message: IMessage) {
+    socket.emit('newMessage', {
+        receiverID,
+        message
     })
 }
 
