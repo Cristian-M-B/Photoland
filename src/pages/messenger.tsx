@@ -18,7 +18,7 @@ interface Props {
     conversations: IConversation[]
 }
 
-export default function messenger({ allUsers, userSession, conversations }: Props) {
+export default function Messenger({ allUsers, userSession, conversations }: Props) {
     const [currentUser, setCurrentUser] = useState<IUser>(userSession)
     const [currentChat, setCurrentChat] = useState<IConversation | null>(null)
 
