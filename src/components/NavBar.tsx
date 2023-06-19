@@ -5,17 +5,21 @@ import SearchBar from './SearchBar'
 import NotificationsBox from './NotificationsBox'
 import Menu from './Menu'
 import connect, { newUser, showNotification, deleteUser, disconnect } from '../utils/socketio'
-import { Link, Typography, IconButton, Avatar } from '@mui/material'
+import { Link, Typography, IconButton, Badge, Avatar } from '@mui/material'
+import Message from '@mui/icons-material/Message'
 import { useTheme } from '@mui/material/styles'
 
-const navStyles = {
+const navStyles: React.CSSProperties  = {
     height: '12vh',
     width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingLeft: '2vw',
-    paddingRight: '2vw'
+    paddingRight: '2vw',
+    top: '0px',
+    position: 'sticky',
+    zIndex: '20'
 }
 
 interface Props {
@@ -61,6 +65,13 @@ export default function NavBar({ allUsers, currentUser, setCurrentUser }: Props)
             </NextLink>
             <SearchBar allUsers={allUsers} />
             <div>
+                {currentUser?._id &&
+                    <IconButton>
+                        <Badge color='secondary'>
+                            <Message sx={{ color: 'background.default' }} />
+                        </Badge>
+                    </IconButton>
+                }
                 <NotificationsBox
                     currentUser={currentUser}
                     notifications={notifications}
