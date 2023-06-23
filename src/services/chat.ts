@@ -33,3 +33,12 @@ export async function getConversation(userIdOne: string, userIdTwo: string) {
         console.log(error)
     }
 }
+
+export async function newConversation(senderID: string, receiverID: string) {
+    try {
+        const { data } = await axios.post('api/conversation', { senderID, receiverID })
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+}
