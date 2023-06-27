@@ -4,14 +4,11 @@ import IUser, { INotification } from '../types/user'
 import IMessage from '../types/message'
 
 let socket: Socket
-const PHOTOLAND_URL = process.env.NODE_ENV === 'production'
-    ? 'https://photolandpage.vercel.app'
-    : 'http://localhost:3000'
+const PHOTOLAND_URL = process.env.PHOTOLAND_URL || ''
 
 export default function connect() {
     fetch('/api/socket')
-    socket = io(`${PHOTOLAND_URL}`)
-    console.log(PHOTOLAND_URL)
+    socket = io()
 }
 
 export function newUser(currentUser: IUser) {
