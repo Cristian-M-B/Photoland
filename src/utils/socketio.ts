@@ -8,6 +8,7 @@ const PHOTOLAND_URL = process.env.PHOTOLAND_URL || ''
 
 export default function connect() {
     fetch('/api/socket')
+    
     socket = io(`${PHOTOLAND_URL}`, {
         path: '/api/socket'
     })
