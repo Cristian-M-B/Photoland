@@ -8,7 +8,9 @@ const PHOTOLAND_URL = process.env.PHOTOLAND_URL || ''
 
 export default function connect() {
     fetch('/api/socket')
-    socket = io()
+    socket = io('https://photolandpage.vercel.app', {
+        path:'/api/socket'
+    })
 }
 
 export function newUser(currentUser: IUser) {
