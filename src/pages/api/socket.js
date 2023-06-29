@@ -19,7 +19,14 @@ export default function handler(req, res) {
 
     if (!res.socket.server.io) {
         console.log('Starting socket.io')
-        const io = new Server(res.socket.server)
+        // const io = new Server(res.socket.server)
+
+        const io = new Server(res.socket.server ,{
+            path: '/api/socket',
+            cors: {
+                origin: ['https://photolandpage.vercel.app']
+            }
+        })
 
         io.on('connection', (socket) => {
             console.log(`Connected: ${socket.id}`)
