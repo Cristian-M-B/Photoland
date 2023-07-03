@@ -21,10 +21,10 @@ export default function handler(req, res) {
         console.log('Starting socket.io')
 
         const io = new Server(res.socket.server, {
-            path: '/api/socket',
-            // hostname: 'localhost',
-            // secure: true,
-            // port: '3000'
+            // path: '/api/socket',
+            // hostname: 'photolandpage.vercel.app',
+            // secure: false,
+            // port: '433'
         })
 
         io.on('connection', (socket) => {
