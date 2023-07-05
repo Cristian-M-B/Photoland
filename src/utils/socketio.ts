@@ -10,7 +10,7 @@ export default function connect() {
     fetch('/api/socket')
     
     socket = io(`${PHOTOLAND_URL}`, {path: '/api/socket'})
-    console.log(`${PHOTOLAND_URL}`)
+    console.log(PHOTOLAND_URL)
     console.log(socket)
 }
 
