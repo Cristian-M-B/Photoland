@@ -5,8 +5,8 @@ import IMessage from '../types/message'
 
 let socket: Socket
 const PHOTOLAND_URL = process.env.NODE_ENV === 'production'
-    ? 'https//photolandpage.vercel.app'
-    : 'http://localhost:3000'
+    ? 'photolandpage.vercel.app'
+    : 'localhost:3000'
 
 export default function connect() {
     fetch('/api/socket')
