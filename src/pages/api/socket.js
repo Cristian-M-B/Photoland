@@ -20,7 +20,9 @@ export default function handler(req, res) {
     if (!res.socket.server.io) {
         console.log('Starting socket.io')
 
-        const io = new Server(res.socket.server, {path:'/api/socket', cors: {origin: '*'}})
+        const io = new Server(res.socket.server, {
+            path:'/api/socket'
+        })
 
         io.on('connection', (socket) => {
             console.log(`Connected: ${socket.id}`)
