@@ -1,5 +1,4 @@
 import { Server } from 'socket.io'
-import { createServer } from 'http'
 
 export default function handler(req, res) {
     let onlineUsers = []
@@ -20,14 +19,10 @@ export default function handler(req, res) {
 
     if (!res.socket.server.io) {
         console.log('Starting socket.io')
-        const httpServer = createServer(res.socket.server)
-        const io = new Server(httpServer, {
+
+        const io = new Server(res.socket.server, {
             path: '/api/socket'
         })
-
-        // const io = new Server(res.socket.server, {
-        //     path: '/api/socket'
-        // })
 
         io.on('connection', (socket) => {
             console.log(`Connected: ${socket.id}`)
