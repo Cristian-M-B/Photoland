@@ -21,7 +21,10 @@ export default function handler(req, res) {
         console.log('Starting socket.io')
 
         const io = new Server(res.socket.server, {
-            path: '/api/socket'
+            path: '/api/socket',
+            cors: {
+                origin: ['https:://photolandpage.vercel.app']
+            }
         })
 
         io.on('connection', (socket) => {
