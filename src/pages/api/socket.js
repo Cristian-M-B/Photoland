@@ -23,7 +23,7 @@ export default function handler(req, res) {
         const io = new Server(res.socket.server, {
             path: '/api/socket',
             cors: {
-                origin: ['https:://photolandpage.vercel.app']
+                origin: ['https://photolandpage.vercel.app']
             }
         })
 
