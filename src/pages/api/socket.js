@@ -24,7 +24,8 @@ export default function handler(req, res) {
             path: '/api/socket',
             cors: {
                 origin: ['https://photolandpage.vercel.app']
-            }
+            },
+            secure: false
         })
 
         io.on('connection', (socket) => {
